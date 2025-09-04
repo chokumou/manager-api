@@ -11,6 +11,7 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
 import jakarta.annotation.Resource;
 import xiaozhi.common.utils.ResourcesUtils;
@@ -20,6 +21,7 @@ import xiaozhi.common.utils.ResourcesUtils;
  * Copyright (c) 人人开源 All rights reserved.
  * Website: https://www.renren.io
  */
+@ConditionalOnBean(name = "redisTemplate")
 @Component
 public class RedisUtils {
     @Resource
