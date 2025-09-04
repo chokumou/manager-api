@@ -16,6 +16,7 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
@@ -35,6 +36,7 @@ import xiaozhi.modules.sys.enums.SuperAdminEnum;
  * Website: https://www.renren.io
  */
 @Component
+@ConditionalOnProperty(name = "APP_ENABLE_SECURITY", havingValue = "true", matchIfMissing = false)
 public class Oauth2Realm extends AuthorizingRealm {
     @Lazy
     @Resource

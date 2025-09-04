@@ -31,6 +31,7 @@ public class AdminApplication {
             System.out.println("[DEBUG] SPRING_DATASOURCE_DRUID_URL=" + url);
             System.out.println("[DEBUG] SPRING_DATASOURCE_DRUID_USERNAME=" + user);
             System.out.println("[DEBUG] SPRING_LIQUIBASE_ENABLED=" + liq);
+            System.out.println("[DEBUG] APP_ENABLE_SECURITY=" + System.getenv("APP_ENABLE_SECURITY"));
             System.out.println("[DEBUG] JAVA_OPTS=" + System.getenv("JAVA_OPTS"));
             System.out.println("[DEBUG] System properties: java.net.preferIPv4Stack=" + System.getProperty("java.net.preferIPv4Stack") + " java.net.preferIPv6Addresses=" + System.getProperty("java.net.preferIPv6Addresses"));
 
