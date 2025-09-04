@@ -3,7 +3,6 @@ package xiaozhi.common.exception;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.shiro.authz.UnauthorizedException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -44,13 +43,12 @@ public class RenExceptionHandler {
         return result;
     }
 
-    @ExceptionHandler(UnauthorizedException.class)
-    public Result<Void> handleUnauthorizedException(UnauthorizedException ex) {
-        Result<Void> result = new Result<>();
-        result.error(ErrorCode.FORBIDDEN);
-
-        return result;
-    }
+    // @ExceptionHandler(UnauthorizedException.class) // Removed due to Shiro removal
+    // public Result<Void> handleUnauthorizedException(UnauthorizedException ex) {
+    //     Result<Void> result = new Result<>();
+    //     result.error(ErrorCode.FORBIDDEN);
+    //     return result;
+    // }
 
     @ExceptionHandler(Exception.class)
     public Result<Void> handleException(Exception ex) {

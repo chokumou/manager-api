@@ -3,7 +3,6 @@ package xiaozhi.modules.device.controller;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,7 +40,6 @@ public class DeviceController {
 
     @PostMapping("/bind/{agentId}/{deviceCode}")
     @Operation(summary = "绑定设备")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> bindDevice(@PathVariable String agentId, @PathVariable String deviceCode) {
         deviceService.deviceActivation(agentId, deviceCode);
         return new Result<>();
@@ -68,25 +66,22 @@ public class DeviceController {
 
     @GetMapping("/bind/{agentId}")
     @Operation(summary = "获取已绑定设备")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<DeviceEntity>> getUserDevices(@PathVariable String agentId) {
-        UserDetail user = SecurityUser.getUser();
+        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
         List<DeviceEntity> devices = deviceService.getUserDevices(user.getId(), agentId);
         return new Result<List<DeviceEntity>>().ok(devices);
     }
 
     @PostMapping("/unbind")
     @Operation(summary = "解绑设备")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> unbindDevice(@RequestBody DeviceUnBindDTO unDeviveBind) {
-        UserDetail user = SecurityUser.getUser();
+        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
         deviceService.unbindDevice(user.getId(), unDeviveBind.getDeviceId());
         return new Result<Void>();
     }
 
     @PutMapping("/update/{id}")
     @Operation(summary = "更新设备信息")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> updateDeviceInfo(@PathVariable String id, @Valid @RequestBody DeviceUpdateDTO deviceUpdateDTO) {
         DeviceEntity entity = deviceService.selectById(id);
         if (entity == null) {
@@ -103,9 +98,8 @@ public class DeviceController {
 
     @PostMapping("/manual-add")
     @Operation(summary = "手动添加设备")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> manualAddDevice(@RequestBody @Valid DeviceManualAddDTO dto) {
-        UserDetail user = SecurityUser.getUser();
+        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
         deviceService.manualAddDevice(user.getId(), dto);
         return new Result<>();
     }
