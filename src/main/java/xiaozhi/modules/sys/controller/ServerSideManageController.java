@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,7 +48,6 @@ public class ServerSideManageController {
 
     @Operation(summary = "获取Ws服务端列表")
     @GetMapping("/server-list")
-    @RequiresPermissions("sys:role:superAdmin")
     public Result<List<String>> getWsServerList() {
         String wsText = sysParamsService.getValue(Constant.SERVER_WEBSOCKET, true);
         if (StringUtils.isBlank(wsText)) {
@@ -61,7 +59,6 @@ public class ServerSideManageController {
     @Operation(summary = "通知python服务端更新配置")
     @PostMapping("/emit-action")
     @LogOperation("通知python服务端更新配置")
-    @RequiresPermissions("sys:role:superAdmin")
     public Result<Boolean> emitServerAction(@RequestBody @Valid EmitSeverActionDTO emitSeverActionDTO) {
         if (emitSeverActionDTO.getAction() == null) {
             throw new RenException("无效服务端操作");

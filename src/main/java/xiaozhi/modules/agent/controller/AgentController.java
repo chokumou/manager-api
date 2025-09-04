@@ -67,7 +67,6 @@ public class AgentController {
 
     @GetMapping("/list")
     @Operation(summary = "获取用户智能体列表")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<AgentDTO>> getUserAgents() {
         UserDetail user = SecurityUser.getUser();
         List<AgentDTO> agents = agentService.getUserAgents(user.getId());
@@ -76,7 +75,6 @@ public class AgentController {
 
     @GetMapping("/all")
     @Operation(summary = "智能体列表（管理员）")
-    @RequiresPermissions("sys:role:superAdmin")
     @Parameters({
             @Parameter(name = Constant.PAGE, description = "当前页码，从1开始", required = true),
             @Parameter(name = Constant.LIMIT, description = "每页显示记录数", required = true),
@@ -89,7 +87,6 @@ public class AgentController {
 
     @GetMapping("/{id}")
     @Operation(summary = "获取智能体详情")
-    @RequiresPermissions("sys:role:normal")
     public Result<AgentInfoVO> getAgentById(@PathVariable("id") String id) {
         AgentInfoVO agent = agentService.getAgentById(id);
         return ResultUtils.success(agent);
@@ -97,7 +94,6 @@ public class AgentController {
 
     @PostMapping
     @Operation(summary = "创建智能体")
-    @RequiresPermissions("sys:role:normal")
     public Result<String> save(@RequestBody @Valid AgentCreateDTO dto) {
         String agentId = agentService.createAgent(dto);
         return new Result<String>().ok(agentId);
@@ -118,7 +114,6 @@ public class AgentController {
 
     @PutMapping("/{id}")
     @Operation(summary = "更新智能体")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> update(@PathVariable String id, @RequestBody @Valid AgentUpdateDTO dto) {
         agentService.updateAgentById(id, dto);
         return new Result<>();
@@ -126,7 +121,6 @@ public class AgentController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除智能体")
-    @RequiresPermissions("sys:role:normal")
     public Result<Void> delete(@PathVariable String id) {
         // 先删除关联的设备
         deviceService.deleteByAgentId(id);
@@ -141,7 +135,6 @@ public class AgentController {
 
     @GetMapping("/template")
     @Operation(summary = "智能体模板模板列表")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<AgentTemplateEntity>> templateList() {
         List<AgentTemplateEntity> list = agentTemplateService
                 .list(new QueryWrapper<AgentTemplateEntity>().orderByAsc("sort"));
@@ -150,7 +143,6 @@ public class AgentController {
 
     @GetMapping("/{id}/sessions")
     @Operation(summary = "获取智能体会话列表")
-    @RequiresPermissions("sys:role:normal")
     @Parameters({
             @Parameter(name = Constant.PAGE, description = "当前页码，从1开始", required = true),
             @Parameter(name = Constant.LIMIT, description = "每页显示记录数", required = true),
@@ -165,7 +157,6 @@ public class AgentController {
 
     @GetMapping("/{id}/chat-history/{sessionId}")
     @Operation(summary = "获取智能体聊天记录")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<AgentChatHistoryDTO>> getAgentChatHistory(
             @PathVariable("id") String id,
             @PathVariable("sessionId") String sessionId) {
@@ -183,7 +174,6 @@ public class AgentController {
     }
     @GetMapping("/{id}/chat-history/user")
     @Operation(summary = "获取智能体聊天记录（用户）")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<AgentChatHistoryUserVO>> getRecentlyFiftyByAgentId(
             @PathVariable("id") String id) {
         // 获取当前用户
@@ -201,7 +191,6 @@ public class AgentController {
 
     @GetMapping("/{id}/chat-history/audio")
     @Operation(summary = "获取音频内容")
-    @RequiresPermissions("sys:role:normal")
     public Result<String> getContentByAudioId(
             @PathVariable("id") String id) {
         // 查询聊天记录
@@ -211,7 +200,6 @@ public class AgentController {
 
     @PostMapping("/audio/{audioId}")
     @Operation(summary = "获取音频下载ID")
-    @RequiresPermissions("sys:role:normal")
     public Result<String> getAudioId(@PathVariable("audioId") String audioId) {
         byte[] audioData = agentChatAudioService.getAudio(audioId);
         if (audioData == null) {

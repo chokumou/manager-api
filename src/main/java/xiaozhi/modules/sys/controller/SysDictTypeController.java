@@ -2,7 +2,6 @@ package xiaozhi.modules.sys.controller;
 
 import java.util.Map;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,7 +39,6 @@ public class SysDictTypeController {
 
     @GetMapping("/page")
     @Operation(summary = "分页查询字典类型")
-    @RequiresPermissions("sys:role:superAdmin")
     @Parameters({ @Parameter(name = "dictType", description = "字典类型编码"),
             @Parameter(name = "dictName", description = "字典类型名称"),
             @Parameter(name = Constant.PAGE, description = "当前页码，从1开始", required = true),
@@ -53,7 +51,6 @@ public class SysDictTypeController {
 
     @GetMapping("/{id}")
     @Operation(summary = "获取字典类型详情")
-    @RequiresPermissions("sys:role:superAdmin")
     public Result<SysDictTypeVO> get(@PathVariable("id") Long id) {
         SysDictTypeVO vo = sysDictTypeService.get(id);
         return new Result<SysDictTypeVO>().ok(vo);
@@ -61,7 +58,6 @@ public class SysDictTypeController {
 
     @PostMapping("/save")
     @Operation(summary = "保存字典类型")
-    @RequiresPermissions("sys:role:superAdmin")
     public Result<Void> save(@RequestBody SysDictTypeDTO dto) {
         // 参数校验
         ValidatorUtils.validateEntity(dto);
@@ -72,7 +68,6 @@ public class SysDictTypeController {
 
     @PutMapping("/update")
     @Operation(summary = "修改字典类型")
-    @RequiresPermissions("sys:role:superAdmin")
     public Result<Void> update(@RequestBody SysDictTypeDTO dto) {
         // 参数校验
         ValidatorUtils.validateEntity(dto);
@@ -83,7 +78,6 @@ public class SysDictTypeController {
 
     @PostMapping("/delete")
     @Operation(summary = "删除字典类型")
-    @RequiresPermissions("sys:role:superAdmin")
     @Parameter(name = "ids", description = "ID数组", required = true)
     public Result<Void> delete(@RequestBody Long[] ids) {
         sysDictTypeService.delete(ids);

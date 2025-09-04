@@ -2,7 +2,6 @@ package xiaozhi.modules.agent.controller;
 
 import java.util.List;
 
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,7 +32,6 @@ public class AgentMcpAccessPointController {
      */
     @Operation(summary = "获取智能体的Mcp接入点地址")
     @GetMapping("/address/{agentId}")
-    @RequiresPermissions("sys:role:normal")
     public Result<String> getAgentMcpAccessAddress(@PathVariable("agentId") String agentId) {
         // 获取当前用户
         UserDetail user = SecurityUser.getUser();
@@ -51,7 +49,6 @@ public class AgentMcpAccessPointController {
 
     @Operation(summary = "获取智能体的Mcp工具列表")
     @GetMapping("/tools/{agentId}")
-    @RequiresPermissions("sys:role:normal")
     public Result<List<String>> getAgentMcpToolsList(@PathVariable("agentId") String agentId) {
         // 获取当前用户
         UserDetail user = SecurityUser.getUser();
