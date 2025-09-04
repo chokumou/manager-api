@@ -14,6 +14,7 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import jakarta.servlet.Filter;
 import xiaozhi.modules.security.oauth2.Oauth2Filter;
@@ -27,6 +28,7 @@ import xiaozhi.modules.sys.service.SysParamsService;
  * Website: https://www.renren.io
  */
 @Configuration
+@ConditionalOnProperty(name = "APP_ENABLE_SECURITY", havingValue = "true", matchIfMissing = true)
 public class ShiroConfig {
 
     @Bean
