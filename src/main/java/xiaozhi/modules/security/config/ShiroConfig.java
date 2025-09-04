@@ -28,7 +28,7 @@ import xiaozhi.modules.sys.service.SysParamsService;
  * Website: https://www.renren.io
  */
 @Configuration
-@ConditionalOnProperty(name = "APP_ENABLE_SECURITY", havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(name = "APP_ENABLE_SECURITY", havingValue = "true", matchIfMissing = false)
 public class ShiroConfig {
 
     @Bean
