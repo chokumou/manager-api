@@ -14,7 +14,6 @@ import xiaozhi.common.user.UserDetail;
 import xiaozhi.common.utils.Result;
 import xiaozhi.modules.agent.service.AgentMcpAccessPointService;
 import xiaozhi.modules.agent.service.AgentService;
-import xiaozhi.modules.security.user.SecurityUser;
 
 @Tag(name = "智能体Mcp接入点管理")
 @RequiredArgsConstructor
@@ -34,7 +33,7 @@ public class AgentMcpAccessPointController {
     @GetMapping("/address/{agentId}")
     public Result<String> getAgentMcpAccessAddress(@PathVariable("agentId") String agentId) {
         // 获取当前用户
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
 
         // 检查权限
         if (!agentService.checkAgentPermission(agentId, user.getId())) {
@@ -51,7 +50,7 @@ public class AgentMcpAccessPointController {
     @GetMapping("/tools/{agentId}")
     public Result<List<String>> getAgentMcpToolsList(@PathVariable("agentId") String agentId) {
         // 获取当前用户
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
 
         // 检查权限
         if (!agentService.checkAgentPermission(agentId, user.getId())) {
@@ -59,5 +58,13 @@ public class AgentMcpAccessPointController {
         }
         List<String> agentMcpToolsList = agentMcpAccessPointService.getAgentMcpToolsList(agentId);
         return new Result<List<String>>().ok(agentMcpToolsList);
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

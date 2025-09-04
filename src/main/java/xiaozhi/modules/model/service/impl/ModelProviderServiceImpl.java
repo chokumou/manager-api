@@ -25,7 +25,6 @@ import xiaozhi.modules.model.dao.ModelProviderDao;
 import xiaozhi.modules.model.dto.ModelProviderDTO;
 import xiaozhi.modules.model.entity.ModelProviderEntity;
 import xiaozhi.modules.model.service.ModelProviderService;
-import xiaozhi.modules.security.user.SecurityUser;
 
 @Service
 @AllArgsConstructor
@@ -99,7 +98,7 @@ public class ModelProviderServiceImpl extends BaseServiceImpl<ModelProviderDao, 
 
     @Override
     public ModelProviderDTO add(ModelProviderDTO modelProviderDTO) {
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         modelProviderDTO.setCreator(user.getId());
         modelProviderDTO.setUpdater(user.getId());
         modelProviderDTO.setCreateDate(new Date());
@@ -117,7 +116,7 @@ public class ModelProviderServiceImpl extends BaseServiceImpl<ModelProviderDao, 
 
     @Override
     public ModelProviderDTO edit(ModelProviderDTO modelProviderDTO) {
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         modelProviderDTO.setUpdater(user.getId());
         modelProviderDTO.setUpdateDate(new Date());
         if (modelProviderDao
@@ -148,5 +147,13 @@ public class ModelProviderServiceImpl extends BaseServiceImpl<ModelProviderDao, 
         queryWrapper.eq("provider_code", StringUtils.isBlank(providerCode) ? "" : providerCode);
         List<ModelProviderEntity> providerEntities = modelProviderDao.selectList(queryWrapper);
         return ConvertUtils.sourceToTarget(providerEntities, ModelProviderDTO.class);
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

@@ -44,7 +44,6 @@ import xiaozhi.modules.model.dto.ModelProviderDTO;
 import xiaozhi.modules.model.entity.ModelConfigEntity;
 import xiaozhi.modules.model.service.ModelConfigService;
 import xiaozhi.modules.model.service.ModelProviderService;
-import xiaozhi.modules.security.user.SecurityUser;
 import xiaozhi.modules.sys.enums.SuperAdminEnum;
 import xiaozhi.modules.timbre.service.TimbreService;
 
@@ -189,7 +188,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         }
 
         // 如果是超级管理员，直接返回true
-        if (SecurityUser.getUser().getSuperAdmin() == SuperAdminEnum.YES.value()) {
+        if (createDummyUser() // TODO: Replace with proper authentication.getSuperAdmin() == SuperAdminEnum.YES.value()) {
             return true;
         }
 
@@ -312,7 +311,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         }
 
         // 设置更新者信息
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         existingEntity.setUpdater(user.getId());
         existingEntity.setUpdatedAt(new Date());
 
@@ -380,7 +379,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         }
 
         // 设置用户ID和创建者信息
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         entity.setUserId(user.getId());
         entity.setCreator(user.getId());
         entity.setCreatedAt(new Date());
@@ -415,5 +414,13 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         // 保存默认插件
         agentPluginMappingService.saveBatch(toInsert);
         return entity.getId();
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

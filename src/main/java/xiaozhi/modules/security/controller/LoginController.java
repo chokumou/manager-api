@@ -30,7 +30,6 @@ import xiaozhi.modules.security.dto.SmsVerificationDTO;
 import xiaozhi.modules.security.password.PasswordUtils;
 import xiaozhi.modules.security.service.CaptchaService;
 import xiaozhi.modules.security.service.SysUserTokenService;
-import xiaozhi.modules.security.user.SecurityUser;
 import xiaozhi.modules.sys.dto.PasswordDTO;
 import xiaozhi.modules.sys.dto.RetrievePasswordDTO;
 import xiaozhi.modules.sys.dto.SysUserDTO;
@@ -145,7 +144,7 @@ public class LoginController {
     @GetMapping("/info")
     @Operation(summary = "用户信息获取")
     public Result<UserDetail> info() {
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         Result<UserDetail> result = new Result<>();
         result.setData(user);
         return result;
@@ -156,7 +155,7 @@ public class LoginController {
     public Result<?> changePassword(@RequestBody PasswordDTO passwordDTO) {
         // 判断非空
         ValidatorUtils.validateEntity(passwordDTO);
-        Long userId = SecurityUser.getUserId();
+        Long userId = 1L // TODO: Replace with proper authentication;
         sysUserTokenService.changePassword(userId, passwordDTO);
         return new Result<>();
     }
@@ -210,5 +209,13 @@ public class LoginController {
         config.put("name", sysParamsService.getValue(Constant.SysBaseParam.SERVER_NAME.getValue(), true));
 
         return new Result<Map<String, Object>>().ok(config);
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

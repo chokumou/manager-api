@@ -27,7 +27,6 @@ import xiaozhi.modules.device.dto.DeviceUpdateDTO;
 import xiaozhi.modules.device.dto.DeviceManualAddDTO;
 import xiaozhi.modules.device.entity.DeviceEntity;
 import xiaozhi.modules.device.service.DeviceService;
-import xiaozhi.modules.security.user.SecurityUser;
 
 @Tag(name = "设备管理")
 @AllArgsConstructor
@@ -67,7 +66,7 @@ public class DeviceController {
     @GetMapping("/bind/{agentId}")
     @Operation(summary = "获取已绑定设备")
     public Result<List<DeviceEntity>> getUserDevices(@PathVariable String agentId) {
-        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         List<DeviceEntity> devices = deviceService.getUserDevices(user.getId(), agentId);
         return new Result<List<DeviceEntity>>().ok(devices);
     }
@@ -75,7 +74,7 @@ public class DeviceController {
     @PostMapping("/unbind")
     @Operation(summary = "解绑设备")
     public Result<Void> unbindDevice(@RequestBody DeviceUnBindDTO unDeviveBind) {
-        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         deviceService.unbindDevice(user.getId(), unDeviveBind.getDeviceId());
         return new Result<Void>();
     }
@@ -87,7 +86,7 @@ public class DeviceController {
         if (entity == null) {
             return new Result<Void>().error("设备不存在");
         }
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         if (!entity.getUserId().equals(user.getId())) {
             return new Result<Void>().error("设备不存在");
         }
@@ -99,8 +98,16 @@ public class DeviceController {
     @PostMapping("/manual-add")
     @Operation(summary = "手动添加设备")
     public Result<Void> manualAddDevice(@RequestBody @Valid DeviceManualAddDTO dto) {
-        // UserDetail user = SecurityUser.getUser(); // TODO: Replace with proper authentication
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         deviceService.manualAddDevice(user.getId(), dto);
         return new Result<>();
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

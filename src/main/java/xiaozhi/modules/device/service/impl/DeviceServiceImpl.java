@@ -41,7 +41,6 @@ import xiaozhi.modules.device.entity.OtaEntity;
 import xiaozhi.modules.device.service.DeviceService;
 import xiaozhi.modules.device.service.OtaService;
 import xiaozhi.modules.device.vo.UserShowDeviceListVO;
-import xiaozhi.modules.security.user.SecurityUser;
 import xiaozhi.modules.sys.service.SysParamsService;
 import xiaozhi.modules.sys.service.SysUserUtilService;
 import xiaozhi.modules.device.dto.DeviceManualAddDTO;
@@ -104,7 +103,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         String macAddress = (String) cacheMap.get("mac_address");
         String board = (String) cacheMap.get("board");
         String appVersion = (String) cacheMap.get("app_version");
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         if (user.getId() == null) {
             throw new RenException("用户未登录");
         }
@@ -436,5 +435,13 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         entity.setUpdater(userId);
         entity.setAutoUpdate(1);
         baseDao.insert(entity);
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 }

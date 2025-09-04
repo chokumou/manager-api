@@ -50,7 +50,6 @@ import xiaozhi.modules.agent.vo.AgentChatHistoryUserVO;
 import xiaozhi.modules.agent.vo.AgentInfoVO;
 import xiaozhi.modules.device.entity.DeviceEntity;
 import xiaozhi.modules.device.service.DeviceService;
-import xiaozhi.modules.security.user.SecurityUser;
 
 @Tag(name = "智能体管理")
 @AllArgsConstructor
@@ -68,7 +67,7 @@ public class AgentController {
     @GetMapping("/list")
     @Operation(summary = "获取用户智能体列表")
     public Result<List<AgentDTO>> getUserAgents() {
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
         List<AgentDTO> agents = agentService.getUserAgents(user.getId());
         return new Result<List<AgentDTO>>().ok(agents);
     }
@@ -161,7 +160,7 @@ public class AgentController {
             @PathVariable("id") String id,
             @PathVariable("sessionId") String sessionId) {
         // 获取当前用户
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
 
         // 检查权限
         if (!agentService.checkAgentPermission(id, user.getId())) {
@@ -177,7 +176,7 @@ public class AgentController {
     public Result<List<AgentChatHistoryUserVO>> getRecentlyFiftyByAgentId(
             @PathVariable("id") String id) {
         // 获取当前用户
-        UserDetail user = SecurityUser.getUser();
+        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
 
         // 检查权限
         if (!agentService.checkAgentPermission(id, user.getId())) {
@@ -228,6 +227,14 @@ public class AgentController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"play.wav\"")
                 .body(audioData);
+    }
+
+    // TODO: Temporary dummy user for authentication-free mode
+    private UserDetail createDummyUser() {
+        UserDetail user = new UserDetail();
+        user.setId(1L);
+        user.setUsername("default_user");
+        return user;
     }
 
 }
