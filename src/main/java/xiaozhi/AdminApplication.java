@@ -83,6 +83,18 @@ public class AdminApplication {
             System.out.println("[DEBUG] PRESTART_ERR: " + e.toString());
         }
 
+        // Allow disabling specific auto-configurations via environment variable to avoid JDBC/Redis startup
+        try {
+            String exclude = System.getenv("SPRING_AUTOCONFIG_EXCLUDE");
+            if (exclude != null && !exclude.isBlank()) {
+                System.out.println("[DEBUG] SPRING_AUTOCONFIG_EXCLUDE=" + exclude);
+                // Set as system property so Spring Boot picks it up early
+                System.setProperty("spring.autoconfigure.exclude", exclude);
+            }
+        } catch (Exception e) {
+            System.out.println("[DEBUG] Failed to apply SPRING_AUTOCONFIG_EXCLUDE: " + e.toString());
+        }
+
         // Now start Spring; if it fails, we will catch and print the stacktrace to logs
         try {
             ApplicationContext ctx = SpringApplication.run(AdminApplication.class, args);
