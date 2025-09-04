@@ -32,13 +32,13 @@ public class ProvisionController {
         String secret = System.getenv("PROVISION_ADMIN_KEY");
         if (secret != null && secret.length() > 0) {
             if (adminKey == null || !secret.equals(adminKey)) {
-                return new Result<String>().error("401", "invalid provision admin key");
+                return new Result<String>().error(401, "invalid provision admin key");
             }
         }
 
         String deviceId = body.getOrDefault("device_id", body.get("deviceId"));
         if (deviceId == null || deviceId.isBlank()) {
-            return new Result<String>().error("400", "device_id is required");
+            return new Result<String>().error(400, "device_id is required");
         }
 
         // Generate a simple token (UUID) and store in redis for 1 hour

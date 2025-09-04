@@ -54,7 +54,7 @@ public class AgentMemoryController {
             }
         }
 
-        return new Result<Void>().ok();
+        return new Result<Void>().ok(null);
     }
 
     @PutMapping("/queryMemory/{deviceId}")
