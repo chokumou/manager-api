@@ -21,7 +21,6 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar /app/app.jar
 
 # Copy optional environment file if present in the repo (do NOT commit secrets to public repo)
-COPY .env.manager-api /app/.env
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh || true
 

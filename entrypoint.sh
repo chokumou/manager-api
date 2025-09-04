@@ -8,6 +8,8 @@ if [ -f "$APP_ENV_FILE" ]; then
   set -o allexport
   . "$APP_ENV_FILE"
   set +o allexport
+else
+  echo ".env file not found, using environment variables directly"
 fi
 
 echo "Starting manager-api"
