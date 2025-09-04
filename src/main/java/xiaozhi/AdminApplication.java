@@ -17,7 +17,10 @@ import java.util.List;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+    org.apache.shiro.spring.boot.autoconfigure.ShiroAutoConfiguration.class,
+    org.apache.shiro.spring.boot.autoconfigure.ShiroBeanAutoConfiguration.class
+})
 public class AdminApplication {
 
     public static void main(String[] args) {
