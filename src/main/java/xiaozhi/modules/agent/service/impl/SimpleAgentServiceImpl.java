@@ -7,20 +7,51 @@ import xiaozhi.modules.agent.service.AgentService;
 import xiaozhi.modules.agent.dto.*;
 import xiaozhi.modules.agent.entity.AgentEntity;
 import xiaozhi.modules.agent.vo.*;
+import xiaozhi.common.page.PageData;
+import xiaozhi.common.service.impl.BaseServiceImpl;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * DB接続失敗時の代替AgentService実装
  */
 @Service
 @ConditionalOnMissingBean(name = "agentServiceImpl")
-public class SimpleAgentServiceImpl implements AgentService {
+public class SimpleAgentServiceImpl extends BaseServiceImpl<Object, AgentEntity> implements AgentService {
+
+    @Override
+    public PageData<AgentEntity> adminAgentList(Map<String, Object> params) {
+        return new PageData<>(new ArrayList<>(), 0L);
+    }
+
+    @Override
+    public boolean insert(AgentEntity entity) {
+        return true;
+    }
+
+    @Override
+    public void deleteAgentByUserId(Long userId) {
+        // No operation
+    }
 
     @Override
     public List<AgentDTO> getUserAgents(Long userId) {
         return new ArrayList<>();
+    }
+
+    @Override
+    public Integer getDeviceCountByAgentId(String agentId) {
+        return 0;
+    }
+
+    @Override
+    public AgentEntity getDefaultAgentByMacAddress(String macAddress) {
+        AgentEntity entity = new AgentEntity();
+        entity.setId("default");
+        entity.setAgentName("Default Agent");
+        return entity;
     }
 
     @Override
@@ -67,16 +98,7 @@ public class SimpleAgentServiceImpl implements AgentService {
     }
 
     @Override
-    public AgentEntity getAgentById(Long agentId) {
-        AgentEntity entity = new AgentEntity();
-        entity.setId("default");
-        entity.setName("Default Agent");
-        entity.setUserId(1L);
-        return entity;
-    }
-
-    @Override
-    public void updateAgent(String id, AgentUpdateDTO dto) {
+    public void updateAgentById(String agentId, AgentUpdateDTO dto) {
         // No operation
     }
 
