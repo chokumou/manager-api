@@ -67,7 +67,7 @@ public class AgentController {
     @GetMapping("/list")
     @Operation(summary = "获取用户智能体列表")
     public Result<List<AgentDTO>> getUserAgents() {
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         List<AgentDTO> agents = agentService.getUserAgents(user.getId());
         return new Result<List<AgentDTO>>().ok(agents);
     }
@@ -160,7 +160,7 @@ public class AgentController {
             @PathVariable("id") String id,
             @PathVariable("sessionId") String sessionId) {
         // 获取当前用户
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
 
         // 检查权限
         if (!agentService.checkAgentPermission(id, user.getId())) {
@@ -176,7 +176,7 @@ public class AgentController {
     public Result<List<AgentChatHistoryUserVO>> getRecentlyFiftyByAgentId(
             @PathVariable("id") String id) {
         // 获取当前用户
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
 
         // 检查权限
         if (!agentService.checkAgentPermission(id, user.getId())) {

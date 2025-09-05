@@ -98,7 +98,7 @@ public class ModelProviderServiceImpl extends BaseServiceImpl<ModelProviderDao, 
 
     @Override
     public ModelProviderDTO add(ModelProviderDTO modelProviderDTO) {
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         modelProviderDTO.setCreator(user.getId());
         modelProviderDTO.setUpdater(user.getId());
         modelProviderDTO.setCreateDate(new Date());
@@ -116,7 +116,7 @@ public class ModelProviderServiceImpl extends BaseServiceImpl<ModelProviderDao, 
 
     @Override
     public ModelProviderDTO edit(ModelProviderDTO modelProviderDTO) {
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         modelProviderDTO.setUpdater(user.getId());
         modelProviderDTO.setUpdateDate(new Date());
         if (modelProviderDao

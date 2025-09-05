@@ -33,7 +33,7 @@ public class AgentMcpAccessPointController {
     @GetMapping("/address/{agentId}")
     public Result<String> getAgentMcpAccessAddress(@PathVariable("agentId") String agentId) {
         // 获取当前用户
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
 
         // 检查权限
         if (!agentService.checkAgentPermission(agentId, user.getId())) {
@@ -50,7 +50,7 @@ public class AgentMcpAccessPointController {
     @GetMapping("/tools/{agentId}")
     public Result<List<String>> getAgentMcpToolsList(@PathVariable("agentId") String agentId) {
         // 获取当前用户
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
 
         // 检查权限
         if (!agentService.checkAgentPermission(agentId, user.getId())) {

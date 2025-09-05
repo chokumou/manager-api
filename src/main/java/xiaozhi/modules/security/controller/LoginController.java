@@ -144,7 +144,7 @@ public class LoginController {
     @GetMapping("/info")
     @Operation(summary = "用户信息获取")
     public Result<UserDetail> info() {
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         Result<UserDetail> result = new Result<>();
         result.setData(user);
         return result;

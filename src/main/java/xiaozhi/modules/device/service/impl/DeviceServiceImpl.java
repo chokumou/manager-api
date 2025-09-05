@@ -103,7 +103,7 @@ public class DeviceServiceImpl extends BaseServiceImpl<DeviceDao, DeviceEntity> 
         String macAddress = (String) cacheMap.get("mac_address");
         String board = (String) cacheMap.get("board");
         String appVersion = (String) cacheMap.get("app_version");
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         if (user.getId() == null) {
             throw new RenException("用户未登录");
         }

@@ -187,13 +187,14 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
             return false;
         }
 
-        // 如果是超级管理员，直接返回true
-        if (createDummyUser() // TODO: Replace with proper authentication.getSuperAdmin() == SuperAdminEnum.YES.value()) {
+        // 如果是超级管理员，直接返回true (認証なしモードではtrueを返す)
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
+        if (user.getSuperAdmin() != null && user.getSuperAdmin() == SuperAdminEnum.YES.value()) {
             return true;
         }
-
-        // 检查是否是智能体的所有者
-        return userId.equals(agent.getUserId());
+        
+        // 認証なしモードでは全てのユーザーにアクセス権限を付与
+        return true; // TODO: Implement proper permission check when authentication is enabled
     }
 
     // 根据id更新智能体信息
@@ -311,7 +312,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         }
 
         // 设置更新者信息
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         existingEntity.setUpdater(user.getId());
         existingEntity.setUpdatedAt(new Date());
 
@@ -379,7 +380,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         }
 
         // 设置用户ID和创建者信息
-        UserDetail user = createDummyUser() // TODO: Replace with proper authentication;
+        UserDetail user = createDummyUser(); // TODO: Replace with proper authentication
         entity.setUserId(user.getId());
         entity.setCreator(user.getId());
         entity.setCreatedAt(new Date());
@@ -421,6 +422,7 @@ public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> imp
         UserDetail user = new UserDetail();
         user.setId(1L);
         user.setUsername("default_user");
+        user.setSuperAdmin(SuperAdminEnum.NO.value()); // デフォルトは一般ユーザー
         return user;
     }
 }
