@@ -12,14 +12,10 @@ else
   echo ".env file not found, using environment variables directly"
 fi
 
-# MyBatis auto-configuration を有効化（DB接続に必要）
-if [ -z "$SPRING_AUTOCONFIG_EXCLUDE" ]; then
-  export SPRING_AUTOCONFIG_EXCLUDE="org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration"
-else
-  # MyBatisAutoConfigurationを除外リストから削除
-  export SPRING_AUTOCONFIG_EXCLUDE=$(echo "$SPRING_AUTOCONFIG_EXCLUDE" | sed 's/,org\.mybatis\.spring\.boot\.autoconfigure\.MybatisAutoConfiguration//g' | sed 's/org\.mybatis\.spring\.boot\.autoconfigure\.MybatisAutoConfiguration,//g' | sed 's/org\.mybatis\.spring\.boot\.autoconfigure\.MybatisAutoConfiguration//g')
-fi
+# DB機能を完全無効化（認証なしモードのため）
+export SPRING_AUTOCONFIG_EXCLUDE="org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration,org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration,com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure,org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration,org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration,org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration"
 
+echo "DB機能無効化モード"
 echo "SPRING_AUTOCONFIG_EXCLUDE: $SPRING_AUTOCONFIG_EXCLUDE"
 echo "Starting manager-api"
 exec java $JAVA_OPTS -jar /app/app.jar
