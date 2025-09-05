@@ -1,15 +1,32 @@
 package xiaozhi.controller;
 
 import org.springframework.web.bind.annotation.*;
-import xiaozhi.dto.ApiResponse;
+import xiaozhi.dto.*;
+import xiaozhi.service.OTAService;
 
 @RestController
 @RequestMapping("/otaMag")
 public class OTAController {
+    
+    private final OTAService otaService;
+    
+    public OTAController(OTAService otaService) {
+        this.otaService = otaService;
+    }
 
     @GetMapping("/health")
     public ApiResponse<String> health() {
         return ApiResponse.ok("manager-api is running");
+    }
+
+    @PostMapping("/check")
+    public ApiResponse<OTACheckResponse> checkUpdate(@RequestBody OTACheckRequest request) {
+        try {
+            OTACheckResponse response = otaService.checkUpdate(request);
+            return ApiResponse.ok(response);
+        } catch (Exception e) {
+            return ApiResponse.error("OTA check failed: " + e.getMessage());
+        }
     }
 
     @GetMapping("/getDownloadUrl")
@@ -17,10 +34,12 @@ public class OTAController {
             @RequestParam(required = false) String version,
             @RequestParam(required = false) String deviceType) {
         
-        // 固定のファームウェアダウンロードURL
-        String downloadUrl = "https://example.com/firmware/latest.bin";
-        
-        return ApiResponse.ok(downloadUrl);
+        try {
+            String downloadUrl = otaService.getDownloadUrl(version, deviceType);
+            return ApiResponse.ok(downloadUrl);
+        } catch (Exception e) {
+            return ApiResponse.error("Failed to get download URL: " + e.getMessage());
+        }
     }
 
     @PostMapping("/uploadFirmware")
