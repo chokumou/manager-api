@@ -1,8 +1,8 @@
 -- Supabase用テーブル作成SQL
 -- Manager API用のテーブル定義
 
--- デバイス管理テーブル
-CREATE TABLE IF NOT EXISTS devices (
+-- manager用デバイス情報テーブル（既存devicesテーブルとは別）
+CREATE TABLE IF NOT EXISTS manager_devices (
     device_id VARCHAR(255) PRIMARY KEY,
     mac_address VARCHAR(17) UNIQUE NOT NULL,
     device_type VARCHAR(50),
@@ -28,9 +28,9 @@ CREATE TABLE IF NOT EXISTS firmware (
 );
 
 -- インデックス作成
-CREATE INDEX IF NOT EXISTS idx_devices_mac_address ON devices(mac_address);
-CREATE INDEX IF NOT EXISTS idx_devices_access_token ON devices(access_token);
-CREATE INDEX IF NOT EXISTS idx_devices_last_heartbeat ON devices(last_heartbeat);
+CREATE INDEX IF NOT EXISTS idx_manager_devices_mac_address ON manager_devices(mac_address);
+CREATE INDEX IF NOT EXISTS idx_manager_devices_access_token ON manager_devices(access_token);
+CREATE INDEX IF NOT EXISTS idx_manager_devices_last_heartbeat ON manager_devices(last_heartbeat);
 CREATE INDEX IF NOT EXISTS idx_firmware_device_type_latest ON firmware(device_type, is_latest);
 
 -- 初期ファームウェアデータ
