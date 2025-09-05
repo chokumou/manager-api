@@ -46,9 +46,11 @@ import xiaozhi.modules.model.service.ModelConfigService;
 import xiaozhi.modules.model.service.ModelProviderService;
 import xiaozhi.modules.sys.enums.SuperAdminEnum;
 import xiaozhi.modules.timbre.service.TimbreService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 
-@Service
+@Service("agentServiceImpl")
 @AllArgsConstructor
+@ConditionalOnBean(name = "sqlSessionTemplate")
 public class AgentServiceImpl extends BaseServiceImpl<AgentDao, AgentEntity> implements AgentService {
     private final AgentDao agentDao;
     private final TimbreService timbreModelService;
