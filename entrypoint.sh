@@ -1,8 +1,13 @@
 #!/bin/sh
 set -e
 
-echo "Starting Simple Manager API"
-echo "Port: 8002"
-echo "Mode: OTA-only"
+# プロファイル設定（環境変数で制御）
+SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-production}"
+export SPRING_PROFILES_ACTIVE
 
-exec java $JAVA_OPTS -jar /app/app.jar
+echo "Starting Manager API"
+echo "Port: 8002"
+echo "Profile: $SPRING_PROFILES_ACTIVE"
+echo "Features: Device Management, OTA Management, Token Auth"
+
+exec java $JAVA_OPTS -Dspring.profiles.active=$SPRING_PROFILES_ACTIVE -jar /app/app.jar
