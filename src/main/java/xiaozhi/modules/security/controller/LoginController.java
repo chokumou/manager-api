@@ -155,7 +155,7 @@ public class LoginController {
     public Result<?> changePassword(@RequestBody PasswordDTO passwordDTO) {
         // 判断非空
         ValidatorUtils.validateEntity(passwordDTO);
-        Long userId = 1L // TODO: Replace with proper authentication;
+        Long userId = 1L; // TODO: Replace with proper authentication
         sysUserTokenService.changePassword(userId, passwordDTO);
         return new Result<>();
     }

@@ -45,7 +45,7 @@ public class AgentVoicePrintController {
     @PutMapping
     @Operation(summary = "更新智能体的对应声纹")
     public Result<Void> update(@RequestBody @Valid AgentVoicePrintUpdateDTO dto) {
-        Long userId = 1L // TODO: Replace with proper authentication;
+        Long userId = 1L; // TODO: Replace with proper authentication
         boolean b = agentVoicePrintService.update(userId, dto);
         if (b) {
             return new Result<>();
@@ -56,7 +56,7 @@ public class AgentVoicePrintController {
     @DeleteMapping("/{id}")
     @Operation(summary = "删除智能体对应声纹")
     public Result<Void> delete(@PathVariable String id) {
-        Long userId = 1L // TODO: Replace with proper authentication;
+        Long userId = 1L; // TODO: Replace with proper authentication
         // 先删除关联的设备
         boolean delete = agentVoicePrintService.delete(userId, id);
         if (delete) {
@@ -72,7 +72,7 @@ public class AgentVoicePrintController {
         if (StringUtils.isBlank(voiceprintUrl) || "null".equals(voiceprintUrl)) {
             throw new RenException("声纹接口未配置，请先在参数配置中配置声纹接口地址(server.voice_print)");
         }
-        Long userId = 1L // TODO: Replace with proper authentication;
+        Long userId = 1L; // TODO: Replace with proper authentication
         List<AgentVoicePrintVO> list = agentVoicePrintService.list(userId, id);
         return new Result<List<AgentVoicePrintVO>>().ok(list);
     }
