@@ -2,7 +2,8 @@
 set -e
 
 # プロファイル設定（環境変数で制御）
-SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-production}"
+# デフォルトはH2（安全のため）
+SPRING_PROFILES_ACTIVE="${SPRING_PROFILES_ACTIVE:-local}"
 export SPRING_PROFILES_ACTIVE
 
 echo "Starting Manager API"
