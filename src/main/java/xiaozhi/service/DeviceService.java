@@ -2,34 +2,19 @@ package xiaozhi.service;
 
 import org.springframework.stereotype.Service;
 import xiaozhi.dto.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Map;
+import xiaozhi.entity.Device;
+import xiaozhi.repository.DeviceRepository;
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.Optional;
 
 @Service
 public class DeviceService {
     
-    // 簡易インメモリストレージ（本来はDB）
-    private final Map<String, DeviceInfo> devices = new ConcurrentHashMap<>();
-    private final Map<String, String> deviceTokens = new ConcurrentHashMap<>();
+    private final DeviceRepository deviceRepository;
     
-    private static class DeviceInfo {
-        String deviceId;
-        String macAddress;
-        String deviceType;
-        String firmwareVersion;
-        LocalDateTime lastHeartbeat;
-        String status;
-        
-        DeviceInfo(String deviceId, String macAddress, String deviceType, String firmwareVersion) {
-            this.deviceId = deviceId;
-            this.macAddress = macAddress;
-            this.deviceType = deviceType;
-            this.firmwareVersion = firmwareVersion;
-            this.lastHeartbeat = LocalDateTime.now();
-            this.status = "online";
-        }
+    public DeviceService(DeviceRepository deviceRepository) {
+        this.deviceRepository = deviceRepository;
     }
     
     public DeviceRegisterResponse registerDevice(DeviceRegisterRequest request) {
@@ -39,22 +24,25 @@ public class DeviceService {
         }
         
         // 既存デバイスチェック
-        String existingDeviceId = findDeviceByMac(request.getMacAddress());
-        if (existingDeviceId != null) {
+        Optional<Device> existingDevice = deviceRepository.findByMacAddress(request.getMacAddress());
+        if (existingDevice.isPresent()) {
             // 既存デバイスの場合、トークンを再発行
+            Device device = existingDevice.get();
             String newToken = generateToken();
-            deviceTokens.put(existingDeviceId, newToken);
-            return new DeviceRegisterResponse(existingDeviceId, newToken, "wss://nekota-server.com/ws");
+            device.setAccessToken(newToken);
+            device.setLastHeartbeat(LocalDateTime.now());
+            device.setStatus("online");
+            deviceRepository.save(device);
+            return new DeviceRegisterResponse(device.getDeviceId(), newToken, "wss://nekota-server.com/ws");
         }
         
         // 新規デバイス登録
         String deviceId = "dev_" + UUID.randomUUID().toString().substring(0, 8);
         String accessToken = generateToken();
         
-        DeviceInfo deviceInfo = new DeviceInfo(deviceId, request.getMacAddress(), 
-                                             request.getDeviceType(), request.getFirmwareVersion());
-        devices.put(deviceId, deviceInfo);
-        deviceTokens.put(deviceId, accessToken);
+        Device device = new Device(deviceId, request.getMacAddress(), 
+                                 request.getDeviceType(), request.getFirmwareVersion(), accessToken);
+        deviceRepository.save(device);
         
         return new DeviceRegisterResponse(deviceId, accessToken, "wss://nekota-server.com/ws");
     }
@@ -65,40 +53,37 @@ public class DeviceService {
             throw new RuntimeException("Invalid token");
         }
         
-        DeviceInfo device = devices.get(deviceId);
-        if (device == null) {
+        Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
+        if (deviceOpt.isEmpty()) {
             throw new RuntimeException("Device not found");
         }
         
-        device.lastHeartbeat = LocalDateTime.now();
-        device.status = "online";
+        Device device = deviceOpt.get();
+        device.setLastHeartbeat(LocalDateTime.now());
+        device.setStatus("online");
+        deviceRepository.save(device);
     }
     
     public String getDeviceStatus(String deviceId) {
-        DeviceInfo device = devices.get(deviceId);
-        if (device == null) {
+        Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
+        if (deviceOpt.isEmpty()) {
             return "not_found";
         }
         
+        Device device = deviceOpt.get();
+        
         // 5分以上ハートビートがない場合はオフライン
-        if (device.lastHeartbeat.isBefore(LocalDateTime.now().minusMinutes(5))) {
-            device.status = "offline";
+        if (device.getLastHeartbeat().isBefore(LocalDateTime.now().minusMinutes(5))) {
+            device.setStatus("offline");
+            deviceRepository.save(device);
         }
         
-        return device.status;
+        return device.getStatus();
     }
     
     public String getCurrentFirmwareVersion(String deviceId) {
-        DeviceInfo device = devices.get(deviceId);
-        return device != null ? device.firmwareVersion : null;
-    }
-    
-    private String findDeviceByMac(String macAddress) {
-        return devices.entrySet().stream()
-                .filter(entry -> entry.getValue().macAddress.equals(macAddress))
-                .map(Map.Entry::getKey)
-                .findFirst()
-                .orElse(null);
+        Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
+        return deviceOpt.map(Device::getFirmwareVersion).orElse(null);
     }
     
     private String generateToken() {
@@ -106,7 +91,12 @@ public class DeviceService {
     }
     
     private boolean isValidToken(String deviceId, String token) {
-        String expectedToken = deviceTokens.get(deviceId);
+        Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
+        if (deviceOpt.isEmpty()) {
+            return false;
+        }
+        
+        String expectedToken = deviceOpt.get().getAccessToken();
         return expectedToken != null && expectedToken.equals(token.replace("Bearer ", ""));
     }
 }

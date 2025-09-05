@@ -2,35 +2,19 @@ package xiaozhi.service;
 
 import org.springframework.stereotype.Service;
 import xiaozhi.dto.*;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import xiaozhi.entity.Firmware;
+import xiaozhi.repository.FirmwareRepository;
+import java.util.Optional;
 
 @Service
 public class OTAService {
     
     private final DeviceService deviceService;
+    private final FirmwareRepository firmwareRepository;
     
-    // 簡易ファームウェア情報ストレージ
-    private final Map<String, FirmwareInfo> firmwareDatabase = new ConcurrentHashMap<>();
-    
-    private static class FirmwareInfo {
-        String version;
-        String deviceType;
-        String downloadUrl;
-        Long fileSize;
-        String checksum;
-        
-        FirmwareInfo(String version, String deviceType, String downloadUrl, Long fileSize, String checksum) {
-            this.version = version;
-            this.deviceType = deviceType;
-            this.downloadUrl = downloadUrl;
-            this.fileSize = fileSize;
-            this.checksum = checksum;
-        }
-    }
-    
-    public OTAService(DeviceService deviceService) {
+    public OTAService(DeviceService deviceService, FirmwareRepository firmwareRepository) {
         this.deviceService = deviceService;
+        this.firmwareRepository = firmwareRepository;
         
         // 初期ファームウェア情報を設定
         initializeFirmwareDatabase();
@@ -45,16 +29,18 @@ public class OTAService {
             currentVersion = deviceService.getCurrentFirmwareVersion(request.getDeviceId());
         }
         
-        FirmwareInfo latestFirmware = getLatestFirmware(deviceType);
+        Optional<Firmware> latestFirmware = firmwareRepository.findByDeviceTypeAndIsLatestTrue(deviceType);
         
-        if (latestFirmware == null) {
+        if (latestFirmware.isEmpty()) {
             return new OTACheckResponse(false);
         }
         
+        Firmware firmware = latestFirmware.get();
+        
         // バージョン比較（簡易版）
-        if (currentVersion == null || !currentVersion.equals(latestFirmware.version)) {
-            return new OTACheckResponse(true, latestFirmware.version, latestFirmware.downloadUrl, 
-                                      latestFirmware.fileSize, latestFirmware.checksum);
+        if (currentVersion == null || !currentVersion.equals(firmware.getVersion())) {
+            return new OTACheckResponse(true, firmware.getVersion(), firmware.getDownloadUrl(), 
+                                      firmware.getFileSize(), firmware.getChecksum());
         }
         
         return new OTACheckResponse(false);
@@ -67,32 +53,29 @@ public class OTAService {
         
         if (version == null) {
             // 最新バージョンのURLを返す
-            FirmwareInfo latest = getLatestFirmware(deviceType);
-            return latest != null ? latest.downloadUrl : "https://example.com/firmware/latest.bin";
+            Optional<Firmware> latest = firmwareRepository.findByDeviceTypeAndIsLatestTrue(deviceType);
+            return latest.map(Firmware::getDownloadUrl).orElse("https://example.com/firmware/latest.bin");
         }
         
         // 指定バージョンのURLを返す
-        String key = deviceType + "_" + version;
-        FirmwareInfo firmware = firmwareDatabase.get(key);
-        return firmware != null ? firmware.downloadUrl : "https://example.com/firmware/" + version + ".bin";
-    }
-    
-    private FirmwareInfo getLatestFirmware(String deviceType) {
-        // 最新ファームウェアを取得（簡易版 - 実際にはバージョンソートが必要）
-        return firmwareDatabase.get(deviceType + "_latest");
+        Optional<Firmware> firmware = firmwareRepository.findByDeviceTypeAndVersion(deviceType, version);
+        return firmware.map(Firmware::getDownloadUrl).orElse("https://example.com/firmware/" + version + ".bin");
     }
     
     private void initializeFirmwareDatabase() {
+        // 既にデータがある場合は初期化しない
+        if (firmwareRepository.count() > 0) {
+            return;
+        }
+        
         // ESP32用の初期ファームウェア情報
-        firmwareDatabase.put("ESP32_1.0.0", new FirmwareInfo("1.0.0", "ESP32", 
-                "https://example.com/firmware/esp32_v1.0.0.bin", 1024000L, "abc123"));
-        firmwareDatabase.put("ESP32_1.1.0", new FirmwareInfo("1.1.0", "ESP32", 
-                "https://example.com/firmware/esp32_v1.1.0.bin", 1048576L, "def456"));
-        firmwareDatabase.put("ESP32_latest", new FirmwareInfo("1.1.0", "ESP32", 
-                "https://example.com/firmware/esp32_v1.1.0.bin", 1048576L, "def456"));
+        firmwareRepository.save(new Firmware("1.0.0", "ESP32", 
+                "https://example.com/firmware/esp32_v1.0.0.bin", 1024000L, "abc123", false));
+        firmwareRepository.save(new Firmware("1.1.0", "ESP32", 
+                "https://example.com/firmware/esp32_v1.1.0.bin", 1048576L, "def456", true));
                 
         // 他のデバイスタイプも追加可能
-        firmwareDatabase.put("ESP32-S3_latest", new FirmwareInfo("1.0.0", "ESP32-S3", 
-                "https://example.com/firmware/esp32s3_v1.0.0.bin", 2097152L, "ghi789"));
+        firmwareRepository.save(new Firmware("1.0.0", "ESP32-S3", 
+                "https://example.com/firmware/esp32s3_v1.0.0.bin", 2097152L, "ghi789", true));
     }
 }
