@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "manager_devices")
+@Table(name = "devices")
 public class Device {
     @Id
     @Column(name = "device_id")
