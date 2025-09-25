@@ -86,6 +86,17 @@ public class DeviceService {
         return deviceOpt.map(Device::getFirmwareVersion).orElse(null);
     }
     
+    public String getDeviceNumber(String deviceId) {
+        Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
+        if (deviceOpt.isPresent()) {
+            Device device = deviceOpt.get();
+            // デバイスIDからデバイス番号を生成（簡易版）
+            // 実際の実装では、データベースからデバイス番号を取得する
+            return device.getDeviceId().substring(4); // "dev_"を除去
+        }
+        return null;
+    }
+    
     private String generateToken() {
         return "tok_" + UUID.randomUUID().toString().replace("-", "");
     }
