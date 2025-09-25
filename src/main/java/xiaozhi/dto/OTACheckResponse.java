@@ -17,6 +17,9 @@ public class OTACheckResponse {
     
     @JsonProperty("checksum")
     private String checksum;
+    
+    @JsonProperty("device_info")
+    private DeviceInfo deviceInfo;
 
     public OTACheckResponse(boolean updateAvailable) {
         this.updateAvailable = updateAvailable;
@@ -30,6 +33,15 @@ public class OTACheckResponse {
         this.checksum = checksum;
     }
 
+    public OTACheckResponse(boolean updateAvailable, String latestVersion, String downloadUrl, Long fileSize, String checksum, DeviceInfo deviceInfo) {
+        this.updateAvailable = updateAvailable;
+        this.latestVersion = latestVersion;
+        this.downloadUrl = downloadUrl;
+        this.fileSize = fileSize;
+        this.checksum = checksum;
+        this.deviceInfo = deviceInfo;
+    }
+
     // Getters and setters
     public boolean isUpdateAvailable() { return updateAvailable; }
     public void setUpdateAvailable(boolean updateAvailable) { this.updateAvailable = updateAvailable; }
@@ -41,4 +53,6 @@ public class OTACheckResponse {
     public void setFileSize(Long fileSize) { this.fileSize = fileSize; }
     public String getChecksum() { return checksum; }
     public void setChecksum(String checksum) { this.checksum = checksum; }
+    public DeviceInfo getDeviceInfo() { return deviceInfo; }
+    public void setDeviceInfo(DeviceInfo deviceInfo) { this.deviceInfo = deviceInfo; }
 }

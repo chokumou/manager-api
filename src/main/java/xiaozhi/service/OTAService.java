@@ -37,13 +37,16 @@ public class OTAService {
         
         Firmware firmware = latestFirmware.get();
         
+        // デバイス情報を作成（セキュリティ上、起動時1回だけ送信）
+        DeviceInfo deviceInfo = createDeviceInfo(request.getDeviceId());
+        
         // バージョン比較（簡易版）
         if (currentVersion == null || !currentVersion.equals(firmware.getVersion())) {
             return new OTACheckResponse(true, firmware.getVersion(), firmware.getDownloadUrl(), 
-                                      firmware.getFileSize(), firmware.getChecksum());
+                                      firmware.getFileSize(), firmware.getChecksum(), deviceInfo);
         }
         
-        return new OTACheckResponse(false);
+        return new OTACheckResponse(false, null, null, null, null, deviceInfo);
     }
     
     public String getDownloadUrl(String version, String deviceType) {
@@ -77,5 +80,19 @@ public class OTAService {
         // 他のデバイスタイプも追加可能
         firmwareRepository.save(new Firmware("1.0.0", "ESP32-S3", 
                 "https://example.com/firmware/esp32s3_v1.0.0.bin", 2097152L, "ghi789", true));
+    }
+    
+    private DeviceInfo createDeviceInfo(String deviceId) {
+        // デバイスIDから正しいデバイス情報を取得
+        if (deviceId != null) {
+            // データベースからデバイス情報を取得
+            String deviceNumber = deviceService.getDeviceNumber(deviceId);
+            if (deviceNumber != null) {
+                return new DeviceInfo(deviceId, deviceNumber);
+            }
+        }
+        
+        // フォールバック: デフォルト値
+        return new DeviceInfo("unknown", "unknown");
     }
 }
