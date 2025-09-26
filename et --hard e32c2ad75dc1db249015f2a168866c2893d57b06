@@ -1,0 +1,5 @@
+[33m9083e19[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m DeviceServiceにgetDeviceNumberメソッドを追加 - ビルドエラー修正
+[33mb695618[m device_info作成処理実装完了 - ESP32起動時のOTA通信で正しいデバイスIDを送信
+[33md60f6c3[m manager-api修正: テーブル名をdevicesに戻してnekota-serverとの互換性回復
+[33m0779ed2[m \テーブル名競合回避: devicesmanager_devices に変更\
+[33m8fd091a[m \正しいSupabase接続情報に修正: nekota-serverと同一DB使用\
